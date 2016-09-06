@@ -9,8 +9,23 @@
 
 #if os(OSX) || os(iOS)
     import Darwin
-#elseif os(Linux)
+#elseif os(Linux) || os(Android)
     import Glibc
+#endif
+
+#if os(Android)
+private func floor( value: CGFloat ) -> Double {
+  return floor( Double(value ) )
+}
+private func ceil( value: CGFloat ) -> Double {
+  return floor( Double(value ) )
+}
+private func round( value: CGFloat ) -> Double {
+  return round( Double(value ) )
+}
+private func +( left: CGFloat, right: Double ) -> Double {
+  return Double(left) + right
+}
 #endif
 
 public struct CGPoint {
@@ -452,7 +467,7 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
         width = 0
     }
     
-
+#if !os(Android)    
     if opts.contains(.AlignWidthInward) && width != 0 {
         guard width.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
         width = floor(aRect.size.width.native)
@@ -478,7 +493,6 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
         height = round(aRect.size.height.native)
     }
 
-    
     if opts.contains(.AlignMinXInward) {
         guard minX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
         minX = ceil(aRect.origin.x.native)
@@ -531,11 +545,12 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
         guard maxY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
         maxY = round(aRect.origin.y.native + aRect.size.height.native)
     }
-    
-    var resultOriginX = CGFloat.NativeType.nan
-    var resultOriginY = CGFloat.NativeType.nan
-    var resultWidth = CGFloat.NativeType.nan
-    var resultHeight = CGFloat.NativeType.nan
+#endif
+
+    var resultOriginX = Double.nan
+    var resultOriginY = Double.nan
+    var resultWidth = Double.nan
+    var resultHeight = Double.nan
     
     if !minX.isNaN {
         resultOriginX = minX
@@ -576,10 +591,10 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
     }
     
     var result = NSZeroRect
-    result.origin.x.native = resultOriginX
-    result.origin.y.native = resultOriginY
-    result.size.width.native = resultWidth
-    result.size.height.native = resultHeight
+    result.origin.x.native = CGFloat.NativeType(resultOriginX)
+    result.origin.y.native = CGFloat.NativeType(resultOriginY)
+    result.size.width.native = CGFloat.NativeType(resultWidth)
+    result.size.height.native = CGFloat.NativeType(resultHeight)
     
     return result
 }
