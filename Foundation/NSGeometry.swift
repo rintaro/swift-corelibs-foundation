@@ -14,18 +14,20 @@
 #endif
 
 #if os(Android)
-private func floor( value: CGFloat ) -> Double {
-  return floor( Double(value ) )
+private func floor( value: CGFloat.NativeType ) -> Double {
+    return floor( Double(value) )
 }
-private func ceil( value: CGFloat ) -> Double {
-  return floor( Double(value ) )
+private func ceil( value: CGFloat.NativeType ) -> Double {
+    return ceil( Double(value) )
 }
-private func round( value: CGFloat ) -> Double {
-  return round( Double(value ) )
+private func round( value: CGFloat.NativeType ) -> Double {
+    return round( Double(value) )
 }
-private func +( left: CGFloat, right: Double ) -> Double {
-  return Double(left) + right
+#if false
+private func +( left: CGFloat.NativeType, right: CGFloat.NativeType ) -> Double {
+    return Double(left) + Double(right)
 }
+#endif
 #endif
 
 public struct CGPoint {
@@ -466,8 +468,7 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
     if aRect.size.width.native < 0 {
         width = 0
     }
-    
-#if !os(Android)    
+#if !os(Android) // FIXME!!!
     if opts.contains(.AlignWidthInward) && width != 0 {
         guard width.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
         width = floor(aRect.size.width.native)
@@ -546,7 +547,6 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
         maxY = round(aRect.origin.y.native + aRect.size.height.native)
     }
 #endif
-
     var resultOriginX = Double.nan
     var resultOriginY = Double.nan
     var resultWidth = Double.nan
