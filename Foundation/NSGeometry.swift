@@ -9,7 +9,7 @@
 
 #if os(OSX) || os(iOS)
     import Darwin
-#elseif os(Linux) || os(Android)
+#elseif os(Linux)
     import Glibc
 #endif
 
@@ -451,89 +451,91 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
     if aRect.size.width.native < 0 {
         width = 0
     }
+    
 
     if opts.contains(.AlignWidthInward) && width != 0 {
         guard width.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        width = floor(aRect.size.width.double)
+        width = floor(aRect.size.width.native)
     }
     if opts.contains(.AlignHeightInward) && height != 0 {
         guard height.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        height = floor(aRect.size.height.double)
+        height = floor(aRect.size.height.native)
     }
     if opts.contains(.AlignWidthOutward) && width != 0 {
         guard width.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        width = ceil(aRect.size.width.double)
+        width = ceil(aRect.size.width.native)
     }
     if opts.contains(.AlignHeightOutward) && height != 0 {
         guard height.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        height = ceil(aRect.size.height.double)
+        height = ceil(aRect.size.height.native)
     }
     if opts.contains(.AlignWidthNearest) && width != 0 {
         guard width.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        width = round(aRect.size.width.double)
+        width = round(aRect.size.width.native)
     }
     if opts.contains(.AlignHeightNearest) && height != 0 {
         guard height.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        height = round(aRect.size.height.double)
+        height = round(aRect.size.height.native)
     }
 
+    
     if opts.contains(.AlignMinXInward) {
         guard minX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minX = ceil(aRect.origin.x.double)
+        minX = ceil(aRect.origin.x.native)
     }
     if opts.contains(.AlignMinYInward) {
         guard minY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minY = ceil(aRect.origin.y.double)
+        minY = ceil(aRect.origin.y.native)
     }
     if opts.contains(.AlignMaxXInward) {
         guard maxX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxX = floor(aRect.origin.x.double + aRect.size.width.double)
+        maxX = floor(aRect.origin.x.native + aRect.size.width.native)
     }
     if opts.contains(.AlignMaxYInward) {
         guard maxY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxY = floor(aRect.origin.y.double + aRect.size.height.double)
+        maxY = floor(aRect.origin.y.native + aRect.size.height.native)
     }
 
     
     if opts.contains(.AlignMinXOutward) {
         guard minX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minX = floor(aRect.origin.x.double)
+        minX = floor(aRect.origin.x.native)
     }
     if opts.contains(.AlignMinYOutward) {
         guard minY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minY = floor(aRect.origin.y.double)
+        minY = floor(aRect.origin.y.native)
     }
     if opts.contains(.AlignMaxXOutward) {
         guard maxX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxX = ceil(aRect.origin.x.double + aRect.size.width.double)
+        maxX = ceil(aRect.origin.x.native + aRect.size.width.native)
     }
     if opts.contains(.AlignMaxYOutward) {
         guard maxY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxY = ceil(aRect.origin.y.double + aRect.size.height.double)
+        maxY = ceil(aRect.origin.y.native + aRect.size.height.native)
     }
     
 
     if opts.contains(.AlignMinXNearest) {
         guard minX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minX = round(aRect.origin.x.double)
+        minX = round(aRect.origin.x.native)
     }
     if opts.contains(.AlignMinYNearest) {
         guard minY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        minY = round(aRect.origin.y.double)
+        minY = round(aRect.origin.y.native)
     }
     if opts.contains(.AlignMaxXNearest) {
         guard maxX.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxX = round(aRect.origin.x.double + aRect.size.width.double)
+        maxX = round(aRect.origin.x.native + aRect.size.width.native)
     }
     if opts.contains(.AlignMaxYNearest) {
         guard maxY.isNaN else { fatalError(listOfOptionsIsInconsistentErrorMessage) }
-        maxY = round(aRect.origin.y.double + aRect.size.height.double)
+        maxY = round(aRect.origin.y.native + aRect.size.height.native)
     }
-
-    var resultOriginX = Double.nan
-    var resultOriginY = Double.nan
-    var resultWidth = Double.nan
-    var resultHeight = Double.nan
+    
+    var resultOriginX = CGFloat.NativeType.nan
+    var resultOriginY = CGFloat.NativeType.nan
+    var resultWidth = CGFloat.NativeType.nan
+    var resultHeight = CGFloat.NativeType.nan
     
     if !minX.isNaN {
         resultOriginX = minX
@@ -574,10 +576,10 @@ public func NSIntegralRectWithOptions(_ aRect: NSRect, _ opts: NSAlignmentOption
     }
     
     var result = NSZeroRect
-    result.origin.x.native = CGFloat.NativeType(resultOriginX)
-    result.origin.y.native = CGFloat.NativeType(resultOriginY)
-    result.size.width.native = CGFloat.NativeType(resultWidth)
-    result.size.height.native = CGFloat.NativeType(resultHeight)
+    result.origin.x.native = resultOriginX
+    result.origin.y.native = resultOriginY
+    result.size.width.native = resultWidth
+    result.size.height.native = resultHeight
     
     return result
 }
